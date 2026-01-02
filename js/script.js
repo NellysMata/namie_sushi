@@ -1,25 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Mobile Menu Toggle
-    const mobileBtn = document.querySelector('.mobile-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
+    // 1. Mobile Menu Toggle
+    // Usamos IDs porque son más rápidos y específicos
+    const mobileBtn = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+    const icon = mobileBtn ? mobileBtn.querySelector('i') : null;
 
     if (mobileBtn && navLinks) {
         mobileBtn.addEventListener('click', () => {
+            const isExpanded = mobileBtn.getAttribute('aria-expanded') === 'true';
+            
+            // Toggle clases
             navLinks.classList.toggle('active');
-            const icon = mobileBtn.querySelector('i');
+            
+            // Accesibilidad: Actualizar estado
+            mobileBtn.setAttribute('aria-expanded', !isExpanded);
 
+            // Cambiar icono
             if (icon) {
-                icon.classList.toggle('fa-bars', !navLinks.classList.contains('active'));
-                icon.classList.toggle('fa-times', navLinks.classList.contains('active'));
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
             }
         });
 
-        // Close menu when clicking a link
+        // Cerrar menú al hacer clic en un enlace (Mejora UX móvil)
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('active');
-                const icon = mobileBtn.querySelector('i');
+                mobileBtn.setAttribute('aria-expanded', 'false');
                 if (icon) {
                     icon.classList.add('fa-bars');
                     icon.classList.remove('fa-times');
@@ -28,56 +36,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Navbar Scroll Effect
+    // 2. Navbar Scroll Effect
     const navbar = document.querySelector('.navbar');
     if (navbar) {
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY > 50;
-            navbar.style.background = scrolled ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.8)';
-            navbar.style.padding = scrolled ? '15px 0' : '20px 0';
+            
+            // Ajuste visual para el tema oscuro de EneSushi
+            if (scrolled) {
+                navbar.style.background = 'rgba(5, 5, 5, 0.95)'; // Casi negro sólido
+                navbar.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
+                navbar.style.padding = '10px 0'; // Reducir altura
+            } else {
+                navbar.style.background = 'rgba(0, 0, 0, 0.7)'; // Transparente
+                navbar.style.boxShadow = 'none';
+                navbar.style.padding = '20px 0'; // Altura original
+            }
         });
     }
 
-    // Smooth Scroll for Anchor Links
+    // 3. Smooth Scroll (Navegación suave)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
+            e.preventDefault();
             const targetId = anchor.getAttribute('href');
+            if (targetId === '#') return;
+            
             const targetElement = document.querySelector(targetId);
 
             if (targetElement) {
-                e.preventDefault();
+                // Compensación para la barra de navegación fija (70px aprox)
+                const headerOffset = 80; 
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
                 window.scrollTo({
-                    top: targetElement.offsetTop - 80,
+                    top: offsetPosition,
                     behavior: 'smooth'
                 });
             }
         });
     });
 
-    // Intersection Observer for Fade-in Animations
-    const observer = new IntersectionObserver((entries) => {
+    // 4. Scroll Animations (Intersection Observer)
+    // Seleccionamos los elementos que queremos animar
+    const animatedElements = document.querySelectorAll('.feature-card, .menu-item, .section-header');
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15 // Se activa cuando el 15% del elemento es visible
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+                entry.target.classList.add('reveal-visible');
+                observer.unobserve(entry.target); // Dejar de observar una vez animado
             }
         });
-    }, { threshold: 0.1 });
+    }, observerOptions);
 
-    document.querySelectorAll('.feature-card, .menu-item, .section-header').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.6s ease-out';
+    animatedElements.forEach(el => {
+        el.classList.add('reveal-hidden'); // Añadimos clase inicial
         observer.observe(el);
     });
-
-    // Visible class injection
-    const style = document.createElement('style');
-    style.innerHTML = `
-        .visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-        }
-    `;
-    document.head.appendChild(style);
 });
