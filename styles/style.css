@@ -1,8 +1,4 @@
-/* ========================================================================
-   EneSushi – Stylesheet
-   Metodología: Mobile First
-   ======================================================================== */
-
+/*EneSushi - Estilos CSS Principales*/
    :root {
     --primary-color: #B22222;       /* Rojo EneSushi */
     --primary-dark: #8b0000;
@@ -59,6 +55,30 @@ h1, h2, h3 { font-family: var(--font-heading); letter-spacing: 1px; }
 .text-outline {
     -webkit-text-stroke: 1px var(--text-color);
     color: transparent;
+}
+/* ========================================================================
+   FIX: FONT AWESOME DISPLAY SWAP
+   Sobrescribe la carga de fuentes del CDN para mejorar Lighthouse
+   ======================================================================== */
+
+/* Fix para Iconos de Marcas (Instagram, Whatsapp, etc) */
+@font-face {
+    font-family: 'Font Awesome 6 Brands';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap; /* <--- Esta es la clave para Lighthouse */
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2") format("woff2"),
+         url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.ttf") format("truetype");
+}
+
+/* Fix para Iconos Sólidos (Barras menú, teléfono, mapa) */
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap; /* <--- Esta es la clave para Lighthouse */
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2") format("woff2"),
+         url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.ttf") format("truetype");
 }
 
 /* --- BUTTONS --- */
@@ -185,7 +205,7 @@ h1, h2, h3 { font-family: var(--font-heading); letter-spacing: 1px; }
     align-items: center;
     position: relative;
     text-align: center;
-    background: url('../img/hero-bg.png') center/cover no-repeat;
+    background: url('../img/hero-bg.webp') center/cover no-repeat;
 }
 
 .hero-overlay {
@@ -297,7 +317,7 @@ h1, h2, h3 { font-family: var(--font-heading); letter-spacing: 1px; }
 /* --- CTA SECTION --- */
 .cta-section {
     background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
-                url('../img/sushi-variado.png') center/cover;
+                url('../img/sushi-variado.webp') center/cover;
     padding: 80px 0;
     text-align: center;
 }
@@ -337,7 +357,7 @@ footer {
 }
 .social-links a:hover { color: var(--primary-color); }
 
-.copyright-section { font-size: 0.85rem; color: #666; }
+.copyright-section { font-size: 0.85rem; color: #FFFFFF; }
 .highlight-link { color: #e91e8c; font-weight: 600; }
 .highlight-link:hover { text-decoration: underline; }
 
